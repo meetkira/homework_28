@@ -1,6 +1,7 @@
 import json
 import os
 
+from django.core.exceptions import ValidationError
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404
 
@@ -8,7 +9,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import DetailView, CreateView, ListView
+from django.views.generic import DetailView, CreateView, ListView, UpdateView, DeleteView
 
 from ads.models import Ad, Category
 from users.models import Location, User
@@ -95,6 +96,51 @@ class AdDetailView(DetailView):
         })
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+class AdUpdateView(UpdateView):
+    model = Ad
+    fields = ["name", "price", "description", "is_published", "author", "category"]
+
+    def patch(self, request, *args, **kwargs):
+        super().post(request, *args, **kwargs)
+
+        ad_data = json.loads(request.body)
+        self.object.name = ad_data["name"]
+        self.object.price = ad_data["price"]
+        self.object.description = ad_data["description"]
+
+        self.object.author = get_object_or_404(User, pk=ad_data["author_id"])
+        self.object.category = get_object_or_404(Category, pk=ad_data["category_id"])
+
+        try:
+            self.object.full_clean()
+        except ValidationError as e:
+            return JsonResponse(e.message_dict, status=422)
+
+        self.object.save()
+        return JsonResponse({
+            "id": self.object.id,
+            "name": self.object.name,
+            "price": self.object.price,
+            "description": self.object.description,
+            "is_published": self.object.is_published,
+            "image": self.object.image.url if self.object.image else None,
+            "author": self.object.author.first_name,
+            "category": self.object.category.name,
+        })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AdDeleteView(DeleteView):
+    model = Ad
+    success_url = "/"
+
+    def delete(self, request, *args, **kwargs):
+        super().delete(request, *args, **kwargs)
+
+        return JsonResponse({"status": "ok"}, status=200)
+
+
 class CatListView(ListView):
     model = Category
     queryset = Category.objects.all()
@@ -115,7 +161,7 @@ class CatListView(ListView):
 @method_decorator(csrf_exempt, name="dispatch")
 class CatCreateView(CreateView):
     model = Category
-    fields = ["name", ]
+    fields = ["name"]
 
     def post(self, request, *args, **kwargs):
         cat_data = json.loads(request.body)
