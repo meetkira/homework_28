@@ -7,8 +7,8 @@ authors = ["Кристина Ратник <kristi.2001@yandex.ru>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 Django = "^4.0.5"
-Pillow = "^9.1.1"
 psycopg2 = "^2.9.3"
+Pillow = "^9.2.0"
 
 [tool.poetry.dev-dependencies]
 
