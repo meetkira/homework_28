@@ -189,3 +189,37 @@ class CatDetailView(DetailView):
             "id": self.object.id,
             "name": self.object.name,
         })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class CatUpdateView(UpdateView):
+    model = Category
+    fields = ["name"]
+
+    def patch(self, request, *args, **kwargs):
+        super().post(request, *args, **kwargs)
+
+        cat_data = json.loads(request.body)
+        self.object.name = cat_data["name"]
+
+        try:
+            self.object.full_clean()
+        except ValidationError as e:
+            return JsonResponse(e.message_dict, status=422)
+
+        self.object.save()
+        return JsonResponse({
+            "id": self.object.id,
+            "name": self.object.name,
+        })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class CatDeleteView(DeleteView):
+    model = Category
+    success_url = "/"
+
+    def delete(self, request, *args, **kwargs):
+        super().delete(request, *args, **kwargs)
+
+        return JsonResponse({"status": "ok"}, status=200)

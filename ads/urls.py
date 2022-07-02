@@ -13,4 +13,6 @@ urlpatterns = [
     path('cat/', views.CatListView.as_view()),
     path("cat/<int:pk>/", views.CatDetailView.as_view()),
     path("cat/create/", views.CatCreateView.as_view()),
+    path("cat/update/<int:pk>/", views.CatUpdateView.as_view()),
+    path("cat/delete/<int:pk>/", views.CatDeleteView.as_view()),
 ]
