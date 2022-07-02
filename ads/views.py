@@ -93,3 +93,53 @@ class AdDetailView(DetailView):
             "author": self.object.author.first_name,
             "category": self.object.category.name,
         })
+
+
+class CatListView(ListView):
+    model = Category
+    queryset = Category.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        super().get(request, *args, **kwargs)
+
+        response = []
+        for cat in self.object_list:
+            response.append({
+                "id": cat.id,
+                "name": cat.name,
+            })
+
+        return JsonResponse(response, safe=False)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class CatCreateView(CreateView):
+    model = Category
+    fields = ["name", ]
+
+    def post(self, request, *args, **kwargs):
+        cat_data = json.loads(request.body)
+        try:
+            cat = Category.objects.create(
+                name=cat_data["name"]
+            )
+
+            return JsonResponse({
+                "id": cat.id,
+                "name": cat.name,
+            }, safe=False, status=200)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=403)
+
+
+class CatDetailView(DetailView):
+    model = Category
+
+    def get(self, request, *args, **kwargs):
+        super().get(request, *args, **kwargs)
+        self.object = self.get_object()
+
+        return JsonResponse({
+            "id": self.object.id,
+            "name": self.object.name,
+        })
