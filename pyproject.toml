@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "homework_28"
+version = "0.1.0"
+description = ""
+authors = ["Кристина Ратник <kristi.2001@yandex.ru>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Django = "^4.0.5"
+Pillow = "^9.1.1"
+psycopg2 = "^2.9.3"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
