@@ -5,8 +5,8 @@ from django.db import models
 
 class Location(models.Model):
     name = models.CharField(max_length=100)
-    lat = models.FloatField()
-    lng = models.FloatField()
+    lat = models.FloatField(null=True, blank=True)
+    lng = models.FloatField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Расположение"
