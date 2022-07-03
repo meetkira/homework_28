@@ -9,7 +9,7 @@ urlpatterns = [
     path("ad/<int:pk>/", views.AdDetailView.as_view()),
     path("ad/create/", views.AdCreateView.as_view()),
     path("ad/<int:pk>/update/", views.AdUpdateView.as_view()),
-    path("ad/image/<int:pk>/", views.AdImageView.as_view()),
+    path("ad/<int:pk>/upload_image/", views.AdImageView.as_view()),
     path("ad/<int:pk>/delete/", views.AdDeleteView.as_view()),
     path('cat/', views.CatListView.as_view()),
     path("cat/<int:pk>/", views.CatDetailView.as_view()),
