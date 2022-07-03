@@ -3,18 +3,17 @@ import os
 
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
-from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 from django.utils.decorators import method_decorator
-from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, CreateView, ListView, UpdateView, DeleteView
 
 from ads.models import Ad, Category
 from homework_28 import settings
-from users.models import Location, User
+from users.models import User
 
 
 def index(request):
@@ -28,6 +27,8 @@ class AdListView(ListView):
 
     def get(self, request, *args, **kwargs):
         super().get(request, *args, **kwargs)
+
+        self.object_list = self.object_list.order_by("price")
 
         paginator = Paginator(self.object_list, settings.TOTAL_ON_PAGE)
         page_number = request.GET.get("page", 1)
@@ -182,6 +183,8 @@ class CatListView(ListView):
 
     def get(self, request, *args, **kwargs):
         super().get(request, *args, **kwargs)
+
+        self.object_list = self.object_list.order_by("name")
 
         response = []
         for cat in self.object_list:

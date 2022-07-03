@@ -2,8 +2,8 @@ import json
 
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from django.db.models import Count, Q
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 from django.utils.decorators import method_decorator
@@ -26,6 +26,7 @@ class UserListView(ListView):
     def get(self, request, *args, **kwargs):
         super().get(request, *args, **kwargs)
 
+        self.object_list = self.object_list.annotate(total_ads=Count("ad"))
         self.object_list = self.object_list.prefetch_related("locations")
 
         paginator = Paginator(self.object_list, settings.TOTAL_ON_PAGE)
@@ -42,6 +43,7 @@ class UserListView(ListView):
                 "role": user.role,
                 "age": user.age,
                 "locations": list(map(str, user.locations.all())),
+                "total_ads": user.total_ads,
             })
 
         response = {
