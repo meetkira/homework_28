@@ -129,6 +129,7 @@ class AdUpdateView(UpdateView):
             "category": self.object.category.name,
         })
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class AdImageView(UpdateView):
     model = Ad
@@ -150,7 +151,6 @@ class AdImageView(UpdateView):
             "author": self.object.author.first_name,
             "category": self.object.category.name,
         })
-
 
 
 @method_decorator(csrf_exempt, name='dispatch')
