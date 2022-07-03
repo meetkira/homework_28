@@ -51,9 +51,9 @@ class AddInfo(View):
                 user.password = item["password"]
                 user.role = item["role"]
                 user.age = item["age"]
-                user.location_id = item.get("location_id")
 
                 user.save()
+                user.locations.add(item["location_id"])
 
             with open(json_files[3], 'r', encoding='utf-8') as jsonf:
                 data = json.loads(jsonf.read())
