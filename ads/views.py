@@ -2,6 +2,7 @@ import json
 import os
 
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404
 
@@ -12,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, CreateView, ListView, UpdateView, DeleteView
 
 from ads.models import Ad, Category
+from homework_28 import settings
 from users.models import Location, User
 
 
@@ -27,9 +29,13 @@ class AdListView(ListView):
     def get(self, request, *args, **kwargs):
         super().get(request, *args, **kwargs)
 
-        response = []
-        for ad in self.object_list:
-            response.append({
+        paginator = Paginator(self.object_list, settings.TOTAL_ON_PAGE)
+        page_number = request.GET.get("page", 1)
+        page_obj = paginator.get_page(page_number)
+
+        ads = []
+        for ad in page_obj:
+            ads.append({
                 "id": ad.id,
                 "name": ad.name,
                 "price": ad.price,
@@ -39,6 +45,12 @@ class AdListView(ListView):
                 "author": ad.author.first_name,
                 "category": ad.category.name,
             })
+
+        response = {
+            "items": ads,
+            "num_pages": paginator.num_pages,
+            "total": paginator.count
+        }
 
         return JsonResponse(response, safe=False)
 
