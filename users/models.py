@@ -11,7 +11,6 @@ class Location(models.Model):
     class Meta:
         verbose_name = "Расположение"
         verbose_name_plural = "Расположения"
-        ordering = ["name"]
 
     def __str__(self):
         return self.name
