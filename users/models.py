@@ -11,6 +11,7 @@ class Location(models.Model):
     class Meta:
         verbose_name = "Расположение"
         verbose_name_plural = "Расположения"
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -29,11 +30,12 @@ class User(models.Model):
     password = models.CharField(max_length=30)
     role = models.CharField(max_length=9, default="member", choices=ROLE)
     age = models.PositiveIntegerField()
-    location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True)
+    locations = models.ManyToManyField(Location)
 
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+        ordering = ["username"]
 
     def __str__(self):
         return self.username
